@@ -40,7 +40,9 @@ def account_screen():
     Label(main_screen, text="El Chatsito", height="2", font=("Calibri", 13)).pack()
     Label(main_screen, text="").pack()
     Button(main_screen, text="Iniciar sesion", height="2", width="30", command = login_formulario).pack()
-    
+    Label(main_screen, text="").pack()
+    Button(main_screen, text="Crear Cuenta", height="2", width="30", command = registrar_formulario).pack()
+
 def login_formulario():
     global login_screen
     login_screen = Toplevel(main_screen)
@@ -97,6 +99,86 @@ def login_verify():
 
     else:
         login_error("Usuario y/o contraseña invalidos")
+
+def registrar_formulario():
+    global registrar_screen
+    registrar_screen = Toplevel(main_screen)
+
+    width = 300
+    height = 250
+    screen_width = registrar_screen.winfo_screenwidth()
+    screen_height = registrar_screen.winfo_screenheight()
+    x = (screen_width/2) - (width/2)
+    y = (screen_height/2) - (height/2)
+    registrar_screen.geometry("%dx%d+%d+%d" % (width, height, x, y))
+    registrar_screen.resizable(0, 0)
+
+    registrar_screen.title("Crear Cuenta")
+
+    global username
+    global email
+    global password
+    global repeat_password
+
+    global email_entry
+    global username_entry
+    global password_entry
+    global repeat_password_entry
+
+    username = StringVar()
+    email = StringVar()
+    password = StringVar()
+    repeat_password = StringVar()
+
+
+    Label(registrar_screen, height="1").pack()
+    username_label = Label(registrar_screen, text="Nombre * ")
+    username_label.pack()
+    username_entry = Entry(registrar_screen, textvariable=username)
+    username_entry.pack()
+
+    email_label = Label(registrar_screen, text="Email * ")
+    email_label.pack()
+    email_entry = Entry(registrar_screen, textvariable=email)
+    email_entry.pack()
+
+    password_label = Label(registrar_screen, text="Contraseña *")
+    password_label.pack()
+    password_entry = Entry(registrar_screen, textvariable=password, show="*")
+    password_entry.pack()
+
+    repeat_password_label = Label(registrar_screen, text="Repetir Contraseña *")
+    repeat_password_label.pack()
+    repeat_password_entry = Entry(registrar_screen, textvariable=repeat_password, show="*")
+    repeat_password_entry.pack()
+
+    Label(registrar_screen, text="").pack()
+    Button(registrar_screen, text="Crear Cuenta", width=10, height=1, command = registrar_verify).pack()
+
+def registrar_verify():
+    username_new = username.get()
+    email_new = email.get()
+    password_new = password.get()
+    repeat_password_new = repeat_password.get()
+    level = "user"
+
+    if password_new == '' and repeat_password_new == '':
+        mensajes_alerta("Debe tener contraseña", main_screen)
+    elif password_new != repeat_password_new:
+        mensajes_alerta("Las contraseñas deben ser iguales", main_screen)
+    elif username_new == "":
+        mensajes_alerta("Debe tener un nombre de usuario", main_screen)
+    elif email_new == "":
+        mensajes_alerta("Debe tener un email", main_screen)
+    else:
+        cliente_socket.send(bytes("crear_usuario", "utf-8"))
+        user_new_info = [username_new, email_new, password_new, level]
+        data_string = pickle.dumps(user_new_info)
+        cliente_socket.send(data_string)
+
+        registrar_screen.destroy()
+        mensajes_alerta("Registro Exitoso", main_screen)
+
 
 #mensajes errores login=========================================================
 
@@ -213,9 +295,9 @@ def editar_cuenta():
         cliente_socket.send(data_string)
 
         editar_cuenta_screen.destroy()
-        mensajes_alerta("Actualizacion exitosa")
+        mensajes_alerta("Actualizacion exitosa", home)
     else:
-        mensajes_alerta("La contraseña no es igual")
+        mensajes_alerta("La contraseña no es igual", home)
 
 def cerrar_sesion():
     result = messagebox.askquestion('info', '¿Desea cerrar sesion?', icon="warning")
@@ -382,7 +464,7 @@ def add_user():
     level_new = level.get()
 
     if level_new == "":
-        mensajes_alerta("Debe seleccionar un Nivel")
+        mensajes_alerta("Debe seleccionar un Nivel", home)
     else:
         cliente_socket.send(bytes("crear_usuario", "utf-8"))
         user_new_info = [user_new, pass_new, level_new]
@@ -391,7 +473,7 @@ def add_user():
 
         user_add_screen.destroy()
 
-        mensajes_alerta("Registro Exitoso")
+        mensajes_alerta("Registro Exitoso", home)
         reset_users()
 
 def search_users(filtro):
@@ -476,10 +558,10 @@ def edit_user():
         cliente_socket.send(data_string)
 
         editar_cuenta_screen.destroy()
-        mensajes_alerta("Actualizacion exitosa")
+        mensajes_alerta("Actualizacion exitosa", home)
         reset_users()
     else:
-        mensajes_alerta("La contraseña no es igual")
+        mensajes_alerta("La contraseña no es igual", home)
 
 #menu inventario================================================================
 
@@ -500,18 +582,18 @@ def Search(filtro):
 
 #alert info=====================================================================
 
-def mensajes_alerta(mensaje):
+def mensajes_alerta(mensaje, father):
     global mensaje_alerta_screen
     mensaje_alert = StringVar()
     mensaje_alert.set(mensaje)
 
-    mensaje_alerta_screen = Toplevel(home)
+    mensaje_alerta_screen = Toplevel(father)
     mensaje_alerta_screen.title("info")
 
     width = 200
     height = 100
-    screen_width = home.winfo_screenwidth()
-    screen_height = home.winfo_screenheight()
+    screen_width = father.winfo_screenwidth()
+    screen_height = father.winfo_screenheight()
     x = (screen_width/2) - (width/2)
     y = (screen_height/2) - (height/2)
     mensaje_alerta_screen.geometry("%dx%d+%d+%d" % (width, height, x, y))

@@ -81,7 +81,8 @@ def encargarse_cliente(cliente):
             print("crear usuario")
             user_new =  cliente.recv(1024)
             user_new = pickle.loads(user_new)
-            DB.CREATE_USER(user_new[0], user_new[1], user_new[2])
+            print(user_new)
+            DB.CREATE_USER(user_new[0], user_new[1], user_new[2], user_new[3])
 
         if opcion == 'editar_usuario':
             print("editar usuario")

@@ -78,11 +78,11 @@ def DELETE_USER(code):
     conexion.commit()
     conexion.close()
 
-def CREATE_USER(new_user, new_pass, new_level):
+def CREATE_USER(new_user, new_email, new_pass, new_level):
     conexion = mysql.connector.connect( host="localhost", user="root", passwd="", database=nombre_db)
     cursor = conexion.cursor()
 
-    cursor.execute("INSERT INTO usuarios (name_user, password, level) VALUES('"+new_user+"', '"+new_pass+"', '"+new_level+"')")
+    cursor.execute("INSERT INTO usuarios (name_user, email, password, level) VALUES('"+new_user+"', '"+new_email+"', '"+new_pass+"', '"+new_level+"')")
 
     conexion.commit()
     conexion.close()
