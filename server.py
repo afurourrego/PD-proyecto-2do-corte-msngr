@@ -43,7 +43,8 @@ def encargarse_cliente(cliente):
                 cliente.send(bytes("exito", "utf-8"))
                 #envia el nombre de usuario y level
                 user_logged = [result[0], result[1], result[2], result[3], result[4]]
-                result = [result[1], result[4], result[1]]
+                result = [result[1], result[4], result[2]]
+                print(result)
                 data_string = pickle.dumps(result)
                 cliente.send(data_string)
 
