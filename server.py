@@ -43,7 +43,7 @@ def encargarse_cliente(cliente):
                 cliente.send(bytes("exito", "utf-8"))
                 #envia el nombre de usuario y level
                 user_logged = [result[0], result[1], result[2], result[3], result[4]]
-                result = [result[1], result[4]]
+                result = [result[1], result[4], result[1]]
                 data_string = pickle.dumps(result)
                 cliente.send(data_string)
 
@@ -51,10 +51,10 @@ def encargarse_cliente(cliente):
             print("editar")
             user_edit =  cliente.recv(1024)
             user_edit = pickle.loads(user_edit)
-            if user_edit[1] == '':
-                DB.UPDATE_CUENTA(user_logged[0], user_edit[0], user_logged[2])
+            if user_edit[2] == '':
+                DB.UPDATE_CUENTA(user_logged[0], user_edit[0], user_edit[1], user_logged[3])
             else:
-                DB.UPDATE_CUENTA(user_logged[0], user_edit[0], user_edit[1])
+                DB.UPDATE_CUENTA(user_logged[0], user_edit[0], user_edit[1], user_edit[2])
                 user_logged[2] = user_edit[1]
             user_logged[1] = user_edit[0]
 

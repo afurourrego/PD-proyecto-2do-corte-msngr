@@ -35,11 +35,11 @@ def SEARCH_USER_LOGIN(user_name, user_pass):
 
     return result
 
-def UPDATE_CUENTA(user_code, user_name, user_pass):
+def UPDATE_CUENTA(user_code, user_name, user_email, user_pass):
     conexion = mysql.connector.connect( host="localhost", user="root", passwd="", database=nombre_db)
     cursor = conexion.cursor()
 
-    cursor.execute("UPDATE usuarios SET name_user = '"+user_name+"', password = '"+user_pass+"' WHERE id = "+str(user_code))
+    cursor.execute("UPDATE usuarios SET name_user = '"+user_name+"', email = '"+user_email+"', password = '"+user_pass+"' WHERE id = "+str(user_code))
 
     conexion.commit()
     conexion.close()

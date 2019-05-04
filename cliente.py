@@ -120,8 +120,8 @@ def registrar_formulario():
     global password
     global repeat_password
 
-    global email_entry
     global username_entry
+    global email_entry
     global password_entry
     global repeat_password_entry
 
@@ -252,21 +252,32 @@ def editar_cuenta_formulario():
     editar_cuenta_screen.resizable(0, 0)
 
     global username
+    global email
     global password
     global repeat_password
+
     global username_entry
+    global email_entry
     global password_entry
     global repeat_password_entry
+
     username = StringVar()
+    email = StringVar()
     password = StringVar()
     repeat_password = StringVar()
 
     username.set(user_data[0])
+    email.set(user_data[1])
 
     Label(editar_cuenta_screen, height="2").pack()
     username_label = Label(editar_cuenta_screen, text="Nombre * ")
     username_label.pack()
     username_entry = Entry(editar_cuenta_screen, textvariable=username)
+    username_entry.pack()
+
+    username_label = Label(editar_cuenta_screen, text="Email * ")
+    username_label.pack()
+    username_entry = Entry(editar_cuenta_screen, textvariable=email)
     username_entry.pack()
 
     password_label = Label(editar_cuenta_screen, text="Nueva Contraseña ")
@@ -284,12 +295,13 @@ def editar_cuenta_formulario():
 
 def editar_cuenta():
     username_info = username.get()
+    email_info = email.get()
     password_info = password.get()
     repeat_password_info = repeat_password.get()
 
     if password_info == repeat_password_info:
         cliente_socket.send(bytes("editar", "utf-8"))
-        user_info = [username_info, password_info]
+        user_info = [username_info, email_info, password_info, repeat_password_info]
         data_string = pickle.dumps(user_info)
         #INSERT
         cliente_socket.send(data_string)
