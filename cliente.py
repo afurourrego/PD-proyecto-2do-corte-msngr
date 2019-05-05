@@ -16,8 +16,6 @@ def configuracion():
     global cliente_socket
     cliente_socket = socket()
     cliente_socket.connect(('localhost',9999))
-    # recibir_hilo = Thread(target=recibir)
-    # recibir_hilo.start()
     mainloop()
 
 #LOGIN==========================================================================
@@ -280,7 +278,11 @@ def Home():
     cuadrante_right = Frame(home, width=width)
     cuadrante_right.pack(side=TOP, fill=Y, pady=15)
 
-    global mi_mensaje, mensaje_lista
+    global mi_mensaje, mensaje_lista, recibir_hilo
+
+    recibir_hilo = Thread(target=recibir)
+    recibir_hilo.start()
+
     mi_mensaje = StringVar()
     mi_mensaje.set("")
     scroll = Scrollbar(cuadrante_right)
@@ -299,13 +301,14 @@ def recibir():
     while True:
         try:
             mensaje = cliente_socket.recv(1024).decode("utf-8")
-            mensaje_lista.insert(END,mensaje)
-            mensaje_lista.see(END)
+            print(mensaje)
+            # mensaje_lista.insert(END,mensaje)
+            # mensaje_lista.see(END)
         except OSError:
             break
 
 def enviar(event=None):
-    reset_users_online()
+    # reset_users_online()
     cliente_socket.send(bytes("mensaje_grupal", "utf-8"))
     mensaje = mi_mensaje.get()
     mi_mensaje.set("")

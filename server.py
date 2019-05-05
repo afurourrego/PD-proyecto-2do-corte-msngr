@@ -46,6 +46,7 @@ def encargarse_cliente(cliente):
                 result = [result[1], result[4], result[2]]
                 data_string = pickle.dumps(result)
                 cliente.send(data_string)
+                clientes[cliente] = user_logged[1]
 
         if opcion == 'editar':
             print("editar")
@@ -102,8 +103,22 @@ def encargarse_cliente(cliente):
 
         if opcion == "mensaje_grupal":
             print("mensaje grupal")
+            mensaje = cliente.recv(1024)
+            # guardar_mensaje(nombre, mensaje)
+            broadcast(mensaje, user_logged[1]+": ")
 
+def broadcast(mensaje, prefix=""):
+    for sock in clientes:
+        sock.send(bytes(prefix, "utf-8")+mensaje)
 
+# def guardar_mensaje(nombre,mensaje):
+#     conexion = mysql.connector.connect(user="root", password="", host="localhost", database="chat")
+#     cursor = conexion.cursor()
+#     sql = "INSERT INTO comunicaciones(usuario, mensaje)VALUES(%s,%s)"
+#     parametros = (str(nombre), str(mensaje))
+#     cursor.execute(sql,parametros)
+#     conexion.commit()
+#     conexion.close
 
 if __name__ == "__main__":
     configuracion()
