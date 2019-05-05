@@ -206,10 +206,11 @@ def login_error(mensaje):
 
 def Home():
     global home
+
     home = Tk()
     home.title("El Chatsito")
 
-    width = 1024
+    width = 750
     height = 520
     screen_width = home.winfo_screenwidth()
     screen_height = home.winfo_screenheight()
@@ -229,8 +230,102 @@ def Home():
     if user_data[1] == "administrador":
         menubar.add_command(label="Usuarios", command=manage_users)
 
-
     home.config(menu=menubar)
+
+    # IZQ
+    global tree
+    global SEARCH
+
+    SEARCH = StringVar()
+
+    cuadrante_left = Frame(home, width=width)
+    cuadrante_left.pack(side=LEFT, fill=Y, pady=15)
+
+    box_users_list = Frame(cuadrante_left, width=width)
+    box_users_list.pack(side=TOP, padx=15)
+
+    chat_menu_left = Frame(cuadrante_left, width=width)
+    chat_menu_left.pack()
+
+    scrollbarx = Scrollbar(box_users_list, orient=HORIZONTAL)
+    scrollbary = Scrollbar(box_users_list, orient=VERTICAL)
+
+    tree = ttk.Treeview(box_users_list, columns=("Nombre"), selectmode="extended", height=10, yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set)
+
+    scrollbary.config(command=tree.yview)
+    scrollbary.pack(side=RIGHT, fill=Y)
+    scrollbarx.config(command=tree.xview)
+    scrollbarx.pack(side=BOTTOM, fill=X)
+
+    tree.heading('Nombre', text="Usuarios en Linea",anchor=W)
+
+    tree.column('#0', stretch=NO, minwidth=0, width=0)
+    tree.column('#1', stretch=NO, minwidth=0, width=100)
+
+    tree.pack()
+    listar_usuarios_online()
+
+    label_user_search = Label(chat_menu_left, text="Buscar", font=('arial', 12))
+    label_user_search.pack(padx=7, anchor=W)
+    search = Entry(chat_menu_left, textvariable=SEARCH, font=('arial', 12), width=10)
+    search.pack(fill=X)
+
+    btn_search = Button(chat_menu_left, text="Buscar", command= lambda: search_users("usuarios"))
+    btn_search.pack(pady=10, fill=X)
+
+    btn_reset = Button(chat_menu_left, text="Direct", command=reset_users_online)
+    btn_reset.pack(pady=10, fill=X)
+
+    # DER
+    cuadrante_right = Frame(home, width=width)
+    cuadrante_right.pack(side=TOP, fill=Y, pady=15)
+
+    global mi_mensaje, mensaje_lista
+    mi_mensaje = StringVar()
+    mi_mensaje.set("")
+    scroll = Scrollbar(cuadrante_right)
+    mensaje_lista = Listbox(cuadrante_right, height=25, width=100, yscrollcommand=scroll.set)
+    scroll.pack(side=RIGHT, fill=Y)
+    mensaje_lista.pack(side=LEFT, fill=BOTH)
+    mensaje_lista.pack()
+
+    campo_entrada = Entry(home,textvariable=mi_mensaje)
+    campo_entrada.bind("<Return>",enviar)
+    campo_entrada.pack(pady=5, fill=X)
+    boton_envio = Button(home,text="       Enviar       ",command=enviar)
+    boton_envio.pack()
+
+def recibir():
+    while True:
+        try:
+            mensaje = cliente_socket.recv(1024).decode("utf-8")
+            mensaje_lista.insert(END,mensaje)
+            mensaje_lista.see(END)
+        except OSError:
+            break
+
+def enviar(event=None):
+    reset_users_online()
+    cliente_socket.send(bytes("mensaje_grupal", "utf-8"))
+    mensaje = mi_mensaje.get()
+    mi_mensaje.set("")
+
+    cliente_socket.send(bytes(mensaje, "utf-8"))
+
+def listar_usuarios_online():
+    cliente_socket.send(bytes("listar_usuarios_online", "utf-8"))
+
+    users_list = cliente_socket.recv(1024)
+    users_list = pickle.loads(users_list)
+    for user in users_list:
+        tree.insert('', 'end', values=(user[1]))
+
+def reset_users_online():
+    tree.delete(*tree.get_children())
+    listar_usuarios_online()
+    SEARCH.set("")
+
+
 
 #menu cuenta====================================================================
 

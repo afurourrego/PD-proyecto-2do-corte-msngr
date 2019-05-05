@@ -60,7 +60,7 @@ def SELECT_USERS_FILTER(filtro):
     conexion = mysql.connector.connect( host="localhost", user="root", passwd="", database=nombre_db)
     cursor = conexion.cursor()
 
-    cursor.execute("SELECT id, name_user, level FROM usuarios WHERE name_user LIKE '%"+filtro+"%' OR level LIKE '%"+filtro+"%'")
+    cursor.execute("SELECT id, name_user, email FROM usuarios WHERE name_user LIKE '%"+filtro+"%' OR level LIKE '%"+filtro+"%'")
 
     result = cursor.fetchall()
 
@@ -95,3 +95,17 @@ def UPDATE_USER(user_code, user_name, user_pass):
 
     conexion.commit()
     conexion.close()
+
+# HOME =========================================================================
+
+def SELECT_USERS_ONLINE():
+    conexion = mysql.connector.connect( host="localhost", user="root", passwd="", database=nombre_db)
+    cursor = conexion.cursor()
+
+    cursor.execute("SELECT id, name_user, email FROM usuarios")
+    result = cursor.fetchall()
+
+    conexion.commit()
+    conexion.close()
+
+    return result
