@@ -99,17 +99,6 @@ def UPDATE_USER(user_code, user_name, user_pass):
 
 # HOME =========================================================================
 
-def SELECT_USERS_ONLINE():
-    conexion = mysql.connector.connect( host="localhost", user="root", passwd="", database=nombre_db)
-    cursor = conexion.cursor()
-
-    cursor.execute("SELECT id, name_user, email FROM usuarios")
-    result = cursor.fetchall()
-
-    conexion.commit()
-    conexion.close()
-
-    return result
 
 # LOG ==========================================================================
 

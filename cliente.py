@@ -273,12 +273,17 @@ def Home():
     tree.column('#1', stretch=NO, minwidth=0, width=100)
 
     tree.pack()
+
     listar_usuarios_online()
+
+    btn_users = Button(chat_menu_left, text="Actualizar Conectados", command=listar_usuarios_online)
+    btn_users.pack(pady=10, fill=X)
 
     label_user_search = Label(chat_menu_left, text="Buscar", font=('arial', 12))
     label_user_search.pack(padx=7, anchor=W)
     search = Entry(chat_menu_left, textvariable=SEARCH, font=('arial', 12), width=10)
     search.pack(fill=X)
+
 
     btn_search = Button(chat_menu_left, text="Buscar", command= lambda: search_users("usuarios"))
     btn_search.pack(pady=10, fill=X)
@@ -333,11 +338,11 @@ def enviar(event=None):
 
 def listar_usuarios_online():
     cliente_socket.send(bytes("listar_usuarios_online", "utf-8"))
-
+    tree.delete(*tree.get_children())
     users_list = cliente_socket.recv(1024)
     users_list = pickle.loads(users_list)
     for user in users_list:
-        tree.insert('', 'end', values=(user[1]))
+        tree.insert('', 'end', values=(user))
 
 def reset_users_online():
     tree.delete(*tree.get_children())

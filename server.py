@@ -5,6 +5,7 @@ import DB
 
 clientes = {}
 direcciones = {}
+clientes_on = []
 DB.CREATE_DB()
 DB.CREATE_TABLES()
 
@@ -51,6 +52,7 @@ def encargarse_cliente(cliente):
                 data_string = pickle.dumps(result)
                 cliente.send(data_string)
                 clientes[cliente] = user_logged[1]
+                clientes_on.append(user_logged[1])
 
         if opcion == 'editar':
             print("editar")
@@ -99,8 +101,8 @@ def encargarse_cliente(cliente):
 
         if opcion == "listar_usuarios_online":
             print("listar usuarios online")
-            result = DB.SELECT_USERS_ONLINE()
-            data_string = pickle.dumps(result)
+            print(clientes_on)
+            data_string = pickle.dumps(clientes_on)
             cliente.send(data_string)
 
         #=================================MENSAJES
