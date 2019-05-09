@@ -10,7 +10,7 @@ DB.CREATE_TABLES()
 
 
 def configuracion():
-    global servidor
+    global servidor, mensaje
     servidor = socket()
     servidor.bind(("", 9999))
     servidor.listen(10)
@@ -27,6 +27,7 @@ def aceptar_conexiones():
         Thread(target=encargarse_cliente,args=(cliente_local,)).start()
 
 def encargarse_cliente(cliente):
+    global mensaje
     while True:
         opcion = cliente.recv(1024).decode("utf-8")
 
@@ -101,24 +102,6 @@ def encargarse_cliente(cliente):
 
         #=================================MENSAJES
 
-        if opcion == "mensaje_grupal":
-            print("mensaje grupal")
-            mensaje = cliente.recv(1024)
-            # guardar_mensaje(nombre, mensaje)
-            broadcast(mensaje, user_logged[1]+": ")
-
-def broadcast(mensaje, prefix=""):
-    for sock in clientes:
-        sock.send(bytes(prefix, "utf-8")+mensaje)
-
-# def guardar_mensaje(nombre,mensaje):
-#     conexion = mysql.connector.connect(user="root", password="", host="localhost", database="chat")
-#     cursor = conexion.cursor()
-#     sql = "INSERT INTO comunicaciones(usuario, mensaje)VALUES(%s,%s)"
-#     parametros = (str(nombre), str(mensaje))
-#     cursor.execute(sql,parametros)
-#     conexion.commit()
-#     conexion.close
 
 if __name__ == "__main__":
     configuracion()

@@ -13,9 +13,21 @@ from urllib.request import urlopen
 def configuracion():
     account_screen()
 
-    global cliente_socket
+    global cliente_socket, chat_socket, recibir_hilo, recibir_mensajes
+
+    recibir_mensajes = False
+
+    ip_server = 'localhost'
+
     cliente_socket = socket()
-    cliente_socket.connect(('localhost',9999))
+    cliente_socket.connect((ip_server ,9999))
+
+    chat_socket = socket()
+    chat_socket.connect((ip_server ,9998))
+
+
+    recibir_hilo = Thread(target=recibir)
+    recibir_hilo.start()
     mainloop()
 
 #LOGIN==========================================================================
@@ -280,9 +292,6 @@ def Home():
 
     global mi_mensaje, mensaje_lista, recibir_hilo
 
-    recibir_hilo = Thread(target=recibir)
-    recibir_hilo.start()
-
     mi_mensaje = StringVar()
     mi_mensaje.set("")
     scroll = Scrollbar(cuadrante_right)
@@ -296,20 +305,27 @@ def Home():
     campo_entrada.pack(pady=5, fill=X)
     boton_envio = Button(home,text="       Enviar       ",command=enviar)
     boton_envio.pack()
+    habilitar_recibir()
+
+def habilitar_recibir():
+    global recibir_mensajes
+    recibir_mensajes = True
+    print("true")
 
 def recibir():
+    chat_socket.send(bytes("chat_grupal", "utf-8"))
+    print("1")
     while True:
         try:
-            mensaje = cliente_socket.recv(1024).decode("utf-8")
-            print(mensaje)
-            # mensaje_lista.insert(END,mensaje)
-            # mensaje_lista.see(END)
+            if recibir_mensajes:
+                mensaje = chat_socket.recv(1024).decode("utf-8")
+                mensaje_lista.insert(END, mensaje)
+                mensaje_lista.see(END)
+                print("hola")
         except OSError:
             break
 
 def enviar(event=None):
-    # reset_users_online()
-    cliente_socket.send(bytes("mensaje_grupal", "utf-8"))
     mensaje = mi_mensaje.get()
     mi_mensaje.set("")
 
