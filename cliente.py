@@ -26,8 +26,8 @@ def configuracion():
     chat_socket.connect((ip_server ,9998))
 
 
-    recibir_hilo = Thread(target=recibir)
-    recibir_hilo.start()
+    # recibir_hilo = Thread(target=recibir)
+    # recibir_hilo.start()
     mainloop()
 
 #LOGIN==========================================================================

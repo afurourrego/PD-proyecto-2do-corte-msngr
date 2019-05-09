@@ -15,6 +15,7 @@ def CREATE_TABLES():
     cursor = conexion.cursor()
 
     cursor.execute("CREATE TABLE IF NOT EXISTS usuarios (id INT AUTO_INCREMENT PRIMARY KEY, name_user VARCHAR(255), email VARCHAR(255), password VARCHAR(255), level ENUM('administrador', 'user'))")
+    cursor.execute("CREATE TABLE IF NOT EXISTS log (id INT AUTO_INCREMENT PRIMARY KEY, name_user VARCHAR(255), resultado VARCHAR(255), ip VARCHAR(255), fecha TIMESTAMP)")
 
     cursor.execute("SELECT * FROM usuarios WHERE id = 1 AND level = 'administrador'")
     if cursor.fetchone() is None:
@@ -109,3 +110,14 @@ def SELECT_USERS_ONLINE():
     conexion.close()
 
     return result
+
+# LOG ==========================================================================
+
+def ADD_LOG(name_user, resultado, ip):
+    conexion = mysql.connector.connect( host="localhost", user="root", passwd="", database=nombre_db)
+    cursor = conexion.cursor()
+
+    cursor.execute("INSERT INTO log (name_user, resultado, ip) VALUES('"+name_user+"', '"+resultado+"', '"+ip+"')")
+
+    conexion.commit()
+    conexion.close()

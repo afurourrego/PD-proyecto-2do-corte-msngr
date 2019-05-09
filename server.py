@@ -21,6 +21,7 @@ def configuracion():
 
 def aceptar_conexiones():
     while True:
+        global direccion_cliente
         cliente_local, direccion_cliente = servidor.accept()
         print("%s:%s conectado. "% direccion_cliente)
         direcciones[cliente_local] = direccion_cliente
@@ -40,8 +41,10 @@ def encargarse_cliente(cliente):
 
             if result is None:
                 cliente.send(bytes("error", "utf-8"))
+                DB.ADD_LOG(user_info[0],"Intento Fallido", "%s:%s"% direccion_cliente)
             else:
                 cliente.send(bytes("exito", "utf-8"))
+                DB.ADD_LOG(user_info[0],"Intento Exitoso", "%s:%s"% direccion_cliente)
                 #envia el nombre de usuario y level
                 user_logged = [result[0], result[1], result[2], result[3], result[4]]
                 result = [result[1], result[4], result[2]]
