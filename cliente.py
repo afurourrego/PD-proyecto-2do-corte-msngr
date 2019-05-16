@@ -11,9 +11,10 @@ from urllib.request import urlopen
 #INITIALIZACION=================================================================
 
 def configuracion():
-    account_screen()
+    global cliente_socket, chat_socket, recibir_hilo, recibir_mensajes, index
 
-    global cliente_socket, chat_socket, recibir_hilo, recibir_mensajes
+    index = Tk()
+    account_screen()
 
     recibir_mensajes = False
 
@@ -26,15 +27,15 @@ def configuracion():
     chat_socket.connect((ip_server ,9998))
 
 
-    # recibir_hilo = Thread(target=recibir)
-    # recibir_hilo.start()
+    recibir_hilo = Thread(target=recibir)
+    recibir_hilo.start()
     mainloop()
 
 #LOGIN==========================================================================
 
 def account_screen():
     global main_screen
-    main_screen = Tk()
+    main_screen = index
     width = 300
     height = 250
     screen_width = main_screen.winfo_screenwidth()
@@ -217,7 +218,7 @@ def login_error(mensaje):
 def Home():
     global home
 
-    home = Tk()
+    home = index
     home.title("El Chatsito")
 
     width = 750
