@@ -11,10 +11,8 @@ from urllib.request import urlopen
 #INITIALIZACION=================================================================
 
 def configuracion():
-    global cliente_socket, chat_socket, recibir_hilo, recibir_mensajes, index
+    global cliente_socket, chat_socket, recibir_hilo, recibir_mensajes, home
 
-    index = Tk()
-    account_screen()
 
     recibir_mensajes = False
 
@@ -29,13 +27,17 @@ def configuracion():
 
     recibir_hilo = Thread(target=recibir)
     recibir_hilo.start()
+
+    home = Tk()
+    account_screen()
+
     mainloop()
 
 #LOGIN==========================================================================
 
 def account_screen():
     global main_screen
-    main_screen = index
+    main_screen = Toplevel(home)
     width = 300
     height = 250
     screen_width = main_screen.winfo_screenwidth()
@@ -218,7 +220,6 @@ def login_error(mensaje):
 def Home():
     global home
 
-    home = index
     home.title("El Chatsito")
 
     width = 750
@@ -316,10 +317,10 @@ def Home():
 def habilitar_recibir():
     global recibir_mensajes
     recibir_mensajes = True
-    print("true")
+    print("true recibir")
+    chat_socket.send(bytes(user_data[0], "utf-8"))
 
 def recibir():
-    chat_socket.send(bytes("chat_grupal", "utf-8"))
     print("1")
     while True:
         try:
@@ -327,15 +328,15 @@ def recibir():
                 mensaje = chat_socket.recv(1024).decode("utf-8")
                 mensaje_lista.insert(END, mensaje)
                 mensaje_lista.see(END)
-                print("hola")
+                print("recibiendo...")
         except OSError:
             break
 
 def enviar(event=None):
     mensaje = mi_mensaje.get()
     mi_mensaje.set("")
-
-    cliente_socket.send(bytes(mensaje, "utf-8"))
+    chat_socket.send(bytes(mensaje, "utf-8"))
+    print("mensaje enviado")
 
 def listar_usuarios_online():
     cliente_socket.send(bytes("listar_usuarios_online", "utf-8"))
